@@ -1,4 +1,4 @@
-package pl.bednaruk.httpclient;
+package pl.bednaruk.httpclient.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -74,7 +74,7 @@ public class Track {
     public void setChordApps(List<ChordApp> chordApps) {
         this.chordApps = chordApps;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

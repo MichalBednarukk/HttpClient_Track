@@ -1,4 +1,4 @@
-package pl.bednaruk.httpclient;
+package pl.bednaruk.httpclient.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
