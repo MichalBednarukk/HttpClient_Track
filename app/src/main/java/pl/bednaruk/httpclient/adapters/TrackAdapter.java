@@ -1,15 +1,16 @@
-package pl.bednaruk.httpclient;
+package pl.bednaruk.httpclient.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
+import pl.bednaruk.httpclient.R;
+import pl.bednaruk.httpclient.models.ChordApp;
+import pl.bednaruk.httpclient.models.Track;
 
 public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> {
     private final List<Track> trackList;
@@ -17,10 +18,8 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
 
     public interface ItemClicked {
         void OnItemClicked(int id);
-
     }
     public TrackAdapter(Context context, List<Track> trackList) {
-
         this.trackList = trackList;
         this.context = context;
     }
@@ -54,7 +53,6 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
         viewHolder.tvChord.setText(chordValue);
         viewHolder.itemView.setOnClickListener(v -> itemClicked.OnItemClicked(trackList.get(position).getId()));
     }
-
     @Override
     public int getItemCount() {
         return trackList.size();
