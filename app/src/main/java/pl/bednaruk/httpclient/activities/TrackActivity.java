@@ -8,6 +8,8 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,6 +26,7 @@ public class TrackActivity extends AppCompatActivity implements Handler.Callback
     private TextView tvTrackName, tvTrackAuthor,tvUsername, tvLyrics;
     private int trackId;
     private Track track;
+    private ProgressBar progressBarTrack;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,8 +51,16 @@ public class TrackActivity extends AppCompatActivity implements Handler.Callback
     }
 
 
+    private void setProgressBarTrack(boolean barStatus) {
+        progressBarTrack = findViewById(R.id.progressBarTrack);
+        progressBarTrack.setIndeterminate(barStatus);
+        if (barStatus)progressBarTrack.setVisibility(View.VISIBLE);
+        else progressBarTrack.setVisibility(View.GONE);
+    }
+
     @Override
     public boolean handleMessage(@NonNull Message msg) {
+        runOnUiThread(() -> setProgressBarTrack(true));
         ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
         Call<Track> call = apiInterface.getTrack(trackId);
         //noinspection NullableProblems
@@ -57,7 +68,10 @@ public class TrackActivity extends AppCompatActivity implements Handler.Callback
             @Override
             public void onResponse(Call<Track> call, Response<Track> response) {
                 track = response.body();
-                runOnUiThread(() -> setUI());
+                runOnUiThread(() -> {
+                    setUI();//Set track
+                    setProgressBarTrack(false);//ProgressBar off
+                });
             }
             @Override
             public void onFailure(Call<Track> call, Throwable t) {

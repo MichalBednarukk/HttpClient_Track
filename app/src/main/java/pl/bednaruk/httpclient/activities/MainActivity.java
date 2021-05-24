@@ -6,6 +6,8 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +29,8 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback,
     private RecyclerView recyclerView;
     private TrackAdapter myAdapter;
     private List<Track> tracks;
+    private ProgressBar progressBarMain;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,14 +50,20 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback,
     @SuppressWarnings("NullableProblems")
     @Override
     public boolean handleMessage(@NonNull Message msg) {
+        runOnUiThread(() -> setProgressBarMain(true));
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
         Call<List<Track>> call = apiInterface.getTracks();
         call.enqueue(new Callback<List<Track>>() {
 
             @Override
             public void onResponse(Call<List<Track>> call, Response<List<Track>> response) {
-                tracks.addAll(response.body());
-                runOnUiThread(() -> setRecyclerOfTrack(tracks));
+                if (response.body() != null) {
+                    tracks.addAll(response.body());
+                }
+                runOnUiThread(() -> {
+                    setRecyclerOfTrack(tracks);
+                    setProgressBarMain(false);
+                });
             }
             @Override
             public void onFailure(Call<List<Track>> call, Throwable t) {
@@ -68,6 +78,13 @@ public class MainActivity extends AppCompatActivity implements Handler.Callback,
         recyclerView.setLayoutManager(layoutManager);
         myAdapter = new TrackAdapter(this, trackArrayList);
         recyclerView.setAdapter(myAdapter);
+    }
+
+    private void setProgressBarMain(boolean barStatus) {
+        progressBarMain = findViewById(R.id.progressBarMain);
+        progressBarMain.setIndeterminate(barStatus);
+        if (barStatus)progressBarMain.setVisibility(View.VISIBLE);
+        else progressBarMain.setVisibility(View.GONE);
     }
 
     @Override
