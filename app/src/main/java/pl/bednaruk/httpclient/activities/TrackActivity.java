@@ -1,5 +1,6 @@
-package pl.bednaruk.httpclient;
+package pl.bednaruk.httpclient.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -15,6 +16,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import pl.bednaruk.httpclient.ApiClient;
+import pl.bednaruk.httpclient.ApiInterface;
+import pl.bednaruk.httpclient.R;
+import pl.bednaruk.httpclient.models.Track;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -38,9 +43,16 @@ public class TrackActivity extends AppCompatActivity implements Handler.Callback
 
     private void initialize() {
         tvTrackName = findViewById(R.id.tvTrackName);
+        tvTrackName.setVisibility(View.INVISIBLE);
+
         tvTrackAuthor = findViewById(R.id.tvTrackAuthor);
+        tvTrackAuthor.setVisibility(View.INVISIBLE);
+
         tvUsername = findViewById(R.id.tvUsername);
+        tvUsername.setVisibility(View.INVISIBLE);
+
         tvLyrics = findViewById(R.id.tvLyrics);
+        tvLyrics.setVisibility(View.INVISIBLE);
     }
 
     private void startThread() {
@@ -83,10 +95,17 @@ public class TrackActivity extends AppCompatActivity implements Handler.Callback
 
     private void setUI(){
         tvTrackName.setText(track.getName());
+        tvTrackName.setVisibility(View.VISIBLE);
+
         tvTrackAuthor.setText(track.getAuthor());
+        tvTrackAuthor.setVisibility(View.VISIBLE);
+
         tvUsername.setText(track.getUsername());
+        tvUsername.setVisibility(View.VISIBLE);
+
         tvLyrics.setMovementMethod(new ScrollingMovementMethod());
         tvLyrics.setText(track.getBody());
+        tvLyrics.setVisibility(View.VISIBLE);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -95,6 +114,9 @@ public class TrackActivity extends AppCompatActivity implements Handler.Callback
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = new Intent(TrackActivity.this, ChordActivity.class);
+        intent.putExtra("trackID",trackId);
+        startActivity(intent);
         return true;
         }
 
