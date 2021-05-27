@@ -20,4 +20,6 @@ public interface ApiInterface {
     Call<List<ChordApp>> getChordsByTrackID(@Path("id") int id);
     @POST("/login")
     Call<Void> login(@Body Login login);
+   @POST("/user/register")
+    Call<Void> registerUser(@Body User user);
 }
