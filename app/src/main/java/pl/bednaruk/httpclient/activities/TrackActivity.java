@@ -10,15 +10,27 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
+
+import java.util.Objects;
 
 import pl.bednaruk.httpclient.ApiClient;
 import pl.bednaruk.httpclient.ApiInterface;
 import pl.bednaruk.httpclient.R;
+import pl.bednaruk.httpclient.SessionManager;
 import pl.bednaruk.httpclient.models.Track;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,6 +46,19 @@ public class TrackActivity extends AppCompatActivity implements Handler.Callback
     private boolean isFavouriteTrack;
     private Track track;
     private ProgressBar progressBarTrack;
+    private ImageButton btnFavourite;
+    private SessionManager sessionManager;
+    private FavouriteTrack favouriteTrack;
+
+    private BottomNavigationView bottomNavigationView;
+    private NavigationView navigationView;
+    private View headerView;
+    private Button btnSignIn;
+    private TextView tvUsername;
+    private ImageView imageView;
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle drawerToggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,17 +69,81 @@ public class TrackActivity extends AppCompatActivity implements Handler.Callback
     }
 
     private void initialize() {
+        sessionManager = new SessionManager(this);
+        username = sessionManager.getUserDetail().get("USERNAME");
+
+        favouriteTrack = new FavouriteTrack();
+
+        btnFavourite = findViewById(R.id.btnFavourite);
+        btnFavourite.setVisibility(View.INVISIBLE);
+
         tvTrackName = findViewById(R.id.tvTrackName);
         tvTrackName.setVisibility(View.INVISIBLE);
 
         tvTrackAuthor = findViewById(R.id.tvTrackAuthor);
         tvTrackAuthor.setVisibility(View.INVISIBLE);
 
-        tvUsername = findViewById(R.id.tvUsername);
-        tvUsername.setVisibility(View.INVISIBLE);
-
         tvLyrics = findViewById(R.id.tvLyrics);
         tvLyrics.setVisibility(View.INVISIBLE);
+
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        drawerLayout = findViewById(R.id.activity_track);
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 0, 0);
+        drawerLayout.addDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        navigationView = findViewById(R.id.navigation_view);
+        navigationView.bringToFront();
+        headerView = navigationView.getHeaderView(0);
+        tvUsername = headerView.findViewById(R.id.tvUsername);
+        imageView = headerView.findViewById(R.id.imageView);
+        btnSignIn = headerView.findViewById(R.id.btnSignIn);
+
+        if(sessionManager.isLoggin()){
+            tvUsername.setText(sessionManager.getUserDetail().get("USERNAME"));
+            btnSignIn.setText("SIGN OUT");
+        }
+        btnSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(sessionManager.isLoggin()){
+                    sessionManager.logout();
+                    Toast.makeText(TrackActivity.this, "LOGOUT", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    Intent intent = new Intent(TrackActivity.this,LoginActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+        navigationView.setNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
+            Intent intent;
+            switch (id) {
+                case R.id.home:intent = new Intent(TrackActivity.this,MainActivity.class);
+                    startActivity(intent);
+                case R.id.favourite:intent = new Intent(TrackActivity.this,FavouriteTracksActivity.class);
+                    startActivity(intent);
+                default:
+                    return true;
+            }
+        });
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                Intent intent;
+                switch (id) {
+                    case R.id.home:
+                        intent = new Intent(TrackActivity.this,MainActivity.class);
+                        startActivity(intent);
+                    case R.id.favourite:intent = new Intent(TrackActivity.this,FavouriteTracksActivity.class);
+                        startActivity(intent);
+                    default:
+                        return true;
+                }
+            }
+        });
     }
 
     private void startThread() {
@@ -63,7 +152,6 @@ public class TrackActivity extends AppCompatActivity implements Handler.Callback
         handler = new Handler(thread.getLooper(), this);
         handler.sendEmptyMessage(0);
     }
-
 
     private void setProgressBarTrack(boolean barStatus) {
         progressBarTrack = findViewById(R.id.progressBarTrack);
@@ -113,12 +201,18 @@ public class TrackActivity extends AppCompatActivity implements Handler.Callback
         return true;
     }
 
+
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = new Intent(TrackActivity.this, ChordActivity.class);
-        intent.putExtra("trackID",trackId);
-        startActivity(intent);
-        return true;
+        if (item.getItemId() == R.id.showChords) {
+            Intent intent = new Intent(TrackActivity.this, ChordActivity.class);
+            intent.putExtra("trackID", trackId);
+            startActivity(intent);
         }
+        if (drawerToggle.onOptionsItemSelected(item))
+            return true;
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     protected void onDestroy() {
