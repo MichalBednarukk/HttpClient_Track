@@ -17,6 +17,7 @@ import java.util.List;
 import pl.bednaruk.httpclient.ApiClient;
 import pl.bednaruk.httpclient.ApiInterface;
 import pl.bednaruk.httpclient.R;
+import pl.bednaruk.httpclient.SessionManager;
 import pl.bednaruk.httpclient.adapters.ChordAdapter;
 import pl.bednaruk.httpclient.models.ChordApp;
 import retrofit2.Call;
@@ -35,6 +36,7 @@ public class ChordActivity extends AppCompatActivity implements Handler.Callback
     private LayoutManager layoutManager;
     private ChordAdapter myAdapter;
     private ProgressBar progressBarChord;
+    SessionManager sessionManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +44,7 @@ public class ChordActivity extends AppCompatActivity implements Handler.Callback
         chords = new ArrayList<>();
         trackID = getIntent().getIntExtra("trackID",0);
         recyclerView = findViewById(R.id.recyclerViewChord);
+        sessionManager = new SessionManager(this);
         startThread();
     }
 
@@ -63,7 +66,7 @@ public class ChordActivity extends AppCompatActivity implements Handler.Callback
         setProgressBarChord(true);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
         {
-            Call<List<ChordApp>> call = apiInterface.getChordsByTrackID(trackID);
+            Call<List<ChordApp>> call = apiInterface.getChordsByTrackID(trackID, sessionManager.getUserDetail().get("TOKEN"));
         //noinspection NullableProblems
         call.enqueue(new Callback<List<ChordApp>>() {
             @Override
