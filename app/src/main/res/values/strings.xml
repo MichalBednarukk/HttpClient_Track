@@ -5,4 +5,15 @@
     <string name="author">Author</string>
     <string name="username">Username</string>
     <string name="lyrics">Lyrics</string>
+    <string name="chords">Chords</string>
+    <string name="todo">TODO</string>
+    <string name="title">Title</string>
+    <string name="password">Password</string>
+    <string name="login">LOGIN</string>
+    <string name="register"><u>Register</u></string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="home">HOME</string>
+    <string name="favourites">Favourites</string>
+    <string name="favorites">FAVORITES</string>
 </resources>

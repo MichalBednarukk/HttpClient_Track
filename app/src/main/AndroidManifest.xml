@@ -12,6 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HttpClient">
+        <activity android:name=".activities.FavouriteTracksActivity"></activity>
+        <activity android:name=".activities.RegisterActivity" />
+        <activity android:name=".activities.LoginActivity" />
         <activity android:name=".activities.AddTrackActivity" />
         <activity android:name=".activities.ChordActivity" />
         <activity android:name=".activities.TrackActivity" />
