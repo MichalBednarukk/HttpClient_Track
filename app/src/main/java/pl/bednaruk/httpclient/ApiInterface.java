@@ -22,4 +22,10 @@ public interface ApiInterface {
     Call<Void> login(@Body Login login);
    @POST("/user/register")
     Call<Void> registerUser(@Body User user);
+    @GET("user/{username}/isFavouriteTrack/{trackId}")
+    Call<Track> isFavouriteTrack(@Path("username") String username, @Path("trackId") String trackId, @Header("Authorization") String authorization);
+    @PATCH("/user/{username}/{trackId}")
+    Call<Void> setFavouriteTrack(@Path("username") String username, @Path("trackId") String trackId, @Header("Authorization") String authorization);
+    @DELETE("/user/{username}/{trackId}")
+    Call<Void> deleteFavouriteTrack(@Path("username") String username, @Path("trackId") String trackId, @Header("Authorization") String authorization);
 }
