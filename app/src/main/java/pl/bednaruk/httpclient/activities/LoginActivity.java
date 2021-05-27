@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,6 +34,7 @@ public class LoginActivity extends AppCompatActivity implements Handler.Callback
     private HandlerThread thread;
     private ApiInterface apiInterface;
     private ProgressBar progressBarLogin;
+    private TextView btnRegister;
     SessionManager sessionManager;
     String username,password,token;
     @Override
@@ -49,10 +51,11 @@ public class LoginActivity extends AppCompatActivity implements Handler.Callback
     }
     private void initialize() {
         sessionManager = new SessionManager(this);
+        btnRegister = findViewById(R.id.btnRegister);
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
-        progressBarLogin = findViewById(R.id.progressBarLogin);
+        progressBarLogin = findViewById(R.id.progressBarRegister);
         progressBarLogin.setVisibility(View.INVISIBLE);
     }
     private void setProgressBarLogin(boolean barStatus) {
@@ -93,13 +96,15 @@ public class LoginActivity extends AppCompatActivity implements Handler.Callback
         password = etPassword.getText().toString();
         return new Login(username,password);
     }
+
     public void login(View view) {
         if(view == btnLogin) startThread();
     }
+
     private void onSuccessLogin(){
         setProgressBarLogin(false);
         Toast.makeText(getApplicationContext(), "LOGIN SUCCESS",Toast.LENGTH_LONG).show();
-        sessionManager.createSession(username, token);
+        sessionManager.createSession("1",username, token);
         Intent intent = new Intent(LoginActivity.this,MainActivity.class);
         startActivity(intent);
     }
@@ -107,4 +112,10 @@ public class LoginActivity extends AppCompatActivity implements Handler.Callback
         setProgressBarLogin(false);
         Toast.makeText(getApplicationContext(), "INCORRECT USERNAME OR PASSWORD",Toast.LENGTH_LONG).show();
     }
+
+    public void registerActivity(View view) {//Click button register
+        Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
+        startActivity(intent);
+    }
+
 }
