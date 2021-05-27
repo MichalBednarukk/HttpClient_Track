@@ -28,4 +28,7 @@ public interface ApiInterface {
     Call<Void> setFavouriteTrack(@Path("username") String username, @Path("trackId") String trackId, @Header("Authorization") String authorization);
     @DELETE("/user/{username}/{trackId}")
     Call<Void> deleteFavouriteTrack(@Path("username") String username, @Path("trackId") String trackId, @Header("Authorization") String authorization);
+    @GET("/user/{username}/favouriteTracks")
+    Call<List<Track>> getFavouriteTracks(@Path("username") String username, @Header("Authorization") String authorization);
+
 }
